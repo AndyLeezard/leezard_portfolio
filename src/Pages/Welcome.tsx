@@ -38,15 +38,16 @@ const Welcome: React.FC<{}> = () => {
     <div className="flex-column-center">
       {(gc.phase >= 4 || gc.phase <= 8) && (
         <span
-          className={`roboto ${
+          className={`roboto text-shadow-hard ${
             gc.phase === 5 || gc.phase === 7 ? "" : "invisible"
           } ${welcomeStyles.welcome_span}`}
           style={{
-            fontSize: "5rem",
+            fontSize:
+              gc.phase === 5 ? "5rem" : gc.phase === 7 ? "3rem" : "1rem",
             transitionDuration: "1250ms",
           }}
         >
-          {gc.phase < 7 ? "Hello" : "I'm a fullstack dev"}
+          {gc.phase < 7 ? "Hello" : "I'm Andy Leezard, a fullstack developer"}
         </span>
       )}
     </div>

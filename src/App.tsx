@@ -22,7 +22,7 @@ const App: React.FC<{}> = () => {
   return (
     <GlobalContext.Provider value={{ phase: phase }}>
       {phase < 9 && <Welcome />}
-      {phase >= 10 && false && <Main />}
+      {phase >= 5 && <Main />}
     </GlobalContext.Provider>
   )
 }

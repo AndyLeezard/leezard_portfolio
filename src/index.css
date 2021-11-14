@@ -20,6 +20,7 @@ canvas {
   position: fixed;
   top: 0;
   left: 0;
+  transition-duration: 2000ms;
 }
 
 .unselectable {
@@ -50,4 +51,7 @@ canvas {
 }
 .white {
   color: #fff;
+}
+.text-shadow-hard {
+  text-shadow: -2px 4px 0 rgba(0, 0, 0, 0.3);
 }
