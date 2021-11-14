@@ -16,6 +16,12 @@ body {
   background-color: #11171c;
 }
 
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 .unselectable {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

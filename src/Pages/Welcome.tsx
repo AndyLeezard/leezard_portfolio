@@ -1,34 +1,15 @@
-import React, { useState, useEffect } from "react"
-import { sleep } from "../Lib/FuncLib"
+import React, { useContext } from "react"
+import { GlobalContext } from "../ContextManager"
 import welcomeStyles from "./Welcome.module.css"
 
 const Welcome: React.FC<{}> = () => {
-  const [phase, setPhase] = useState<number>(0)
-  const [welcomeText, setWelcomeText] = useState<string>("")
-  const timeControl = async () => {
-    setPhase(1)
-    await sleep(1250)
-    setPhase(2)
-    await sleep(1250)
-    setPhase(3)
-    await sleep(2500)
-    setPhase(4)
-    await sleep(1250)
-    setPhase(5)
-    await sleep(1250)
-    setPhase(6)
-    await sleep(1250)
-    setPhase(7)
-  }
-  useEffect(() => {
-    timeControl()
-  }, [])
+  const gc = useContext(GlobalContext)
 
   const phase_0to3 = (
     <div className="flex-column-center">
       <img
         className={`filter-white ${
-          phase === 1 || phase === 2 ? "" : "invisible"
+          gc.phase === 1 || gc.phase === 2 ? "" : "invisible"
         }`}
         src="/lizard.svg"
         alt="Logo"
@@ -40,7 +21,7 @@ const Welcome: React.FC<{}> = () => {
         }}
       />
       <span
-        className={`roboto ${phase === 2 ? "" : "invisible"} ${
+        className={`roboto ${gc.phase === 2 ? "" : "invisible"} ${
           welcomeStyles.welcome_span
         }`}
         style={{
@@ -55,17 +36,17 @@ const Welcome: React.FC<{}> = () => {
 
   const phase_4 = (
     <div className="flex-column-center">
-      {(phase >= 4 || phase <= 8) && (
+      {(gc.phase >= 4 || gc.phase <= 8) && (
         <span
-          className={`roboto ${phase === 5 || phase === 7 ? "" : "invisible"} ${
-            welcomeStyles.welcome_span
-          }`}
+          className={`roboto ${
+            gc.phase === 5 || gc.phase === 7 ? "" : "invisible"
+          } ${welcomeStyles.welcome_span}`}
           style={{
             fontSize: "5rem",
             transitionDuration: "1250ms",
           }}
         >
-          {phase < 7 ? "Hello" : "I'm a fullstack dev"}
+          {gc.phase < 7 ? "Hello" : "I'm a fullstack dev"}
         </span>
       )}
     </div>
@@ -87,8 +68,8 @@ const Welcome: React.FC<{}> = () => {
           transform: "translate(0,-33%)",
         }}
       >
-        {phase < 4 && phase_0to3}
-        {phase >= 4 && phase_4}
+        {gc.phase < 4 && phase_0to3}
+        {gc.phase >= 4 && phase_4}
       </div>
     </div>
   )
