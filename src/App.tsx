@@ -5,7 +5,7 @@ import { GlobalContext } from "./ContextManager"
 import { sleep } from "./Lib/FuncLib"
 import Main from "./Pages/Main"
 
-const intervals = [1250, 1250, 2500, 1250, 1250, 1250, 1250]
+const intervals = [1250, 1250, 2500, 2000, 2000, 2000, 2000]
 
 const App: React.FC<{}> = () => {
   const [phase, setPhase] = useState<number>(0)

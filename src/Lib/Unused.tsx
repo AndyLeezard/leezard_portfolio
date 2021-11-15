@@ -1,5 +1,10 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
+// POINTLIGHT
+
+//const pointLight = new THREE.PointLight(0xffffff)
+//pointLight.position.set(15, 15, 15)
+
 // HELPER
 
 //const lightHelper = new THREE.PointLightHelper(pointLight)
