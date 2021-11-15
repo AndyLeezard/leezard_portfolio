@@ -33,29 +33,36 @@ const Main: React.FC<Props> = (props) => {
   const [camera, setCamera] = useState<THREE.PerspectiveCamera>(
     new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
   )
-  const [scene, setScene] = useState(new THREE.Scene())
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [scene, SetScene] = useState(new THREE.Scene())
+  const [initialized, setInitialized] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [renderer, setRenderer] = useState(
     new THREE.WebGLRenderer(webGL_renderer_parameters)
   )
-  //const scene = new THREE.Scene()
-  //const renderer = new THREE.WebGLRenderer(webGL_renderer_parameters)
   const gltfLoader = new GLTFLoader()
 
   useEffect(() => {
-    const new_renderer = new THREE.WebGLRenderer(webGL_renderer_parameters)
-    new_renderer.setPixelRatio(window.devicePixelRatio)
-    new_renderer.setSize(width, height)
-    setRenderer(new_renderer)
-    setScene(new THREE.Scene())
+    console.log(width, height)
+    renderer.setSize(width, height)
     setCamera(new THREE.PerspectiveCamera(75, width / height, 0.1, 1000))
-    initialize().then(() => {
+    if (!initialized) {
+      renderer.setPixelRatio(window.devicePixelRatio)
+      initializeScene()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [height, width])
+
+  useEffect(() => {
+    if (initialized) {
+      renderer.render(scene, camera)
       animate()
-    })
+    }
     return () => {
       animate()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [height, width])
+  }, [camera])
 
   function animate() {
     requestAnimationFrame(animate)
@@ -72,38 +79,39 @@ const Main: React.FC<Props> = (props) => {
     renderer.render(scene, camera)
   }
 
-  const initialize = async () => {
-    //renderer.setSize(window.innerWidth, window.innerHeight)
-    let lizardMesh: THREE.Group | null
-    gltfLoader.load("/gltf/little_lizard_head.gltf", (gltf) => {
-      lizardMesh = gltf.scene
-      setMaterialsOnGLTF(lizardMesh, material)
-      gltf.scene.scale.set(13, 13, 13)
-      scene.add(lizardMesh)
-      lizardMesh.position.x = 0
-      lizardMesh.position.y = 0
-      lizardMesh.position.z = 0
-    })
-    camera.position.setZ(30)
-
-    scene.add(ambientLight)
-
-    const starMaterial = useLight
-      ? new THREE.MeshStandardMaterial({ color: 0xffffff })
-      : new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          wireframe: true,
-        })
-    for (let i = 0; i < 200; i++) {
-      scene.add(
-        geomWithRandomPosition(
-          new THREE.Mesh(new THREE.SphereGeometry(0.25, 24, 24), starMaterial),
-          10,
-          400
+  const initializeScene = async () => {
+    if (!initialized) {
+      setInitialized(true)
+      let lizardMesh: THREE.Group | null
+      gltfLoader.load("/gltf/little_lizard_head.gltf", (gltf) => {
+        lizardMesh = gltf.scene
+        setMaterialsOnGLTF(lizardMesh, material)
+        gltf.scene.scale.set(13, 13, 13)
+        scene.add(lizardMesh)
+        lizardMesh.position.x = 0
+        lizardMesh.position.y = 0
+        lizardMesh.position.z = 0
+      })
+      scene.add(ambientLight)
+      const starMaterial = useLight
+        ? new THREE.MeshStandardMaterial({ color: 0xffffff })
+        : new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            wireframe: true,
+          })
+      for (let i = 0; i < 200; i++) {
+        scene.add(
+          geomWithRandomPosition(
+            new THREE.Mesh(
+              new THREE.SphereGeometry(0.25, 24, 24),
+              starMaterial
+            ),
+            10,
+            400
+          )
         )
-      )
+      }
     }
-    renderer.render(scene, camera)
   }
   const opacityEffect = async () => {
     for (let i = 0; i < intervals.length; i++) {
