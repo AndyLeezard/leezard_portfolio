@@ -41,3 +41,28 @@ export const geomWithRandomPosition = (
   geom.position.set(x, y, z)
   return geom
 }
+export const randomHexColor = () => {
+  return Math.floor(Math.random() * 16777215)
+}
+export const formatHexColor = (hexColor: number) => {
+  return "#" + hexColor.toString(16)
+}
+export const adjustBrightness = (
+  hexColor: number,
+  percentage: number
+): number => {
+  let color = formatHexColor(hexColor)
+  let output =
+    "#" +
+    color
+      .replace(/^#/, "")
+      .replace(/../g, (color) =>
+        (
+          "0" +
+          Math.min(255, Math.max(0, parseInt(color, 16) + percentage)).toString(
+            16
+          )
+        ).substr(-2)
+      )
+  return parseInt(output.slice(1), 16)
+}

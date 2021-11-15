@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react"
 import * as THREE from "three"
 import {
   geomWithRandomPosition,
+  randomHexColor,
+  adjustBrightness,
   setMaterialsOnGLTF,
   sleep,
   toggleCanvasOpacity,
@@ -17,7 +19,7 @@ const material = useLight
       color: 0xff6347,
     })
   : new THREE.MeshBasicMaterial({
-      color: 0xff6347,
+      color: adjustBrightness(randomHexColor(), 55),
       wireframe: true,
     })
 const ambientLight = new THREE.AmbientLight(0xffffff)
@@ -83,31 +85,31 @@ const Main: React.FC<Props> = (props) => {
     if (!initialized) {
       setInitialized(true)
       let lizardMesh: THREE.Group | null
-      gltfLoader.load("/gltf/little_lizard_head.gltf", (gltf) => {
+      gltfLoader.load("/gltf/little_lizard_circle_rotated.gltf", (gltf) => {
         lizardMesh = gltf.scene
         setMaterialsOnGLTF(lizardMesh, material)
-        gltf.scene.scale.set(13, 13, 13)
+        gltf.scene.scale.set(3, 3, 3)
         scene.add(lizardMesh)
         lizardMesh.position.x = 0
         lizardMesh.position.y = 0
         lizardMesh.position.z = 0
       })
       scene.add(ambientLight)
-      const starMaterial = useLight
-        ? new THREE.MeshStandardMaterial({ color: 0xffffff })
-        : new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            wireframe: true,
-          })
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < 255; i++) {
+        let size = (Math.random() * 10 + 14) / 100
         scene.add(
           geomWithRandomPosition(
             new THREE.Mesh(
-              new THREE.SphereGeometry(0.25, 24, 24),
-              starMaterial
+              new THREE.SphereGeometry(size, 24, 24),
+              useLight
+                ? new THREE.MeshStandardMaterial({ color: 0xffffff })
+                : new THREE.MeshBasicMaterial({
+                    color: randomHexColor(),
+                    wireframe: true,
+                  })
             ),
-            10,
-            400
+            15,
+            350
           )
         )
       }
