@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import * as THREE from "three"
 import {
   geomWithRandomPosition,
@@ -7,14 +7,9 @@ import {
   toggleCanvasOpacity,
 } from "../Lib/FuncLib"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
+import useWindowDimensions from "../Lib/useWindowDimensions"
 
 const intervals = [3500]
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-)
 const target = new THREE.Vector3(0, 0, 0)
 const useLight = false
 const material = useLight
@@ -31,10 +26,36 @@ const webGL_renderer_parameters: THREE.WebGLRendererParameters = {
   canvas: document.querySelector("#bg"),
 }
 
-const Main = () => {
-  const scene = new THREE.Scene()
-  const renderer = new THREE.WebGLRenderer(webGL_renderer_parameters)
+interface Props {}
+
+const Main: React.FC<Props> = (props) => {
+  const { height, width } = useWindowDimensions()
+  const [camera, setCamera] = useState<THREE.PerspectiveCamera>(
+    new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+  )
+  const [scene, setScene] = useState(new THREE.Scene())
+  const [renderer, setRenderer] = useState(
+    new THREE.WebGLRenderer(webGL_renderer_parameters)
+  )
+  //const scene = new THREE.Scene()
+  //const renderer = new THREE.WebGLRenderer(webGL_renderer_parameters)
   const gltfLoader = new GLTFLoader()
+
+  useEffect(() => {
+    const new_renderer = new THREE.WebGLRenderer(webGL_renderer_parameters)
+    new_renderer.setPixelRatio(window.devicePixelRatio)
+    new_renderer.setSize(width, height)
+    setRenderer(new_renderer)
+    setScene(new THREE.Scene())
+    setCamera(new THREE.PerspectiveCamera(75, width / height, 0.1, 1000))
+    initialize().then(() => {
+      animate()
+    })
+    return () => {
+      animate()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [height, width])
 
   function animate() {
     requestAnimationFrame(animate)
@@ -52,8 +73,7 @@ const Main = () => {
   }
 
   const initialize = async () => {
-    renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(window.innerWidth, window.innerHeight)
+    //renderer.setSize(window.innerWidth, window.innerHeight)
     let lizardMesh: THREE.Group | null
     gltfLoader.load("/gltf/little_lizard_head.gltf", (gltf) => {
       lizardMesh = gltf.scene
@@ -84,15 +104,18 @@ const Main = () => {
       )
     }
     renderer.render(scene, camera)
-    animate()
+  }
+  const opacityEffect = async () => {
     for (let i = 0; i < intervals.length; i++) {
       toggleCanvasOpacity(!Boolean(i === 0 || i % 2 === 0))
       //start by removing invisible tag
       await sleep(intervals[i])
     }
+    document.body.classList.remove("body-class")
+    document.body.classList.add("body-class-3d")
   }
   useEffect(() => {
-    initialize()
+    opacityEffect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return <></>

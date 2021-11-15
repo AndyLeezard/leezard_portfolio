@@ -13,7 +13,15 @@ code {
 }
 
 body {
+  //background-color: #11171c;
+}
+
+.body-class {
   background-color: #11171c;
+}
+
+.body-class-3d {
+  background-color: #000000;
 }
 
 canvas {
