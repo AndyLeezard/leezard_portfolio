@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
 // POINTLIGHT
