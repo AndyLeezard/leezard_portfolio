@@ -10,6 +10,7 @@ import {
 } from "../Lib/FuncLib"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import useWindowDimensions from "../Lib/useWindowDimensions"
+import { webGL_renderer_parameters } from "../Lib/JsLib"
 
 const intervals = [3500]
 const target = new THREE.Vector3(0, 0, 0)
@@ -24,10 +25,6 @@ const material = useLight
     })
 const ambientLight = new THREE.AmbientLight(0xffffff)
 
-const webGL_renderer_parameters: THREE.WebGLRendererParameters = {
-  canvas: document.querySelector("#bg"),
-}
-
 interface Props {}
 
 const Main: React.FC<Props> = (props) => {
@@ -40,16 +37,18 @@ const Main: React.FC<Props> = (props) => {
   const [initialized, setInitialized] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [renderer, setRenderer] = useState(
-    new THREE.WebGLRenderer(webGL_renderer_parameters)
+    webGL_renderer_parameters.canvas !== null
+      ? new THREE.WebGLRenderer({ canvas: webGL_renderer_parameters.canvas })
+      : null
   )
   const gltfLoader = new GLTFLoader()
 
   useEffect(() => {
     console.log(width, height)
-    renderer.setSize(width, height)
+    renderer?.setSize(width, height)
     setCamera(new THREE.PerspectiveCamera(75, width / height, 0.1, 1000))
     if (!initialized) {
-      renderer.setPixelRatio(window.devicePixelRatio)
+      renderer?.setPixelRatio(window.devicePixelRatio)
       initializeScene()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,7 +56,7 @@ const Main: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (initialized) {
-      renderer.render(scene, camera)
+      renderer?.render(scene, camera)
       animate()
     }
     return () => {
@@ -78,7 +77,7 @@ const Main: React.FC<Props> = (props) => {
 
     camera.updateMatrixWorld()
 
-    renderer.render(scene, camera)
+    renderer?.render(scene, camera)
   }
 
   const initializeScene = async () => {
